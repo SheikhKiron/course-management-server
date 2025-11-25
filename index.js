@@ -62,37 +62,37 @@ async function run() {
     });
 
 
- app.put('/courses/:id', async (req, res) => {
-   try {
-     const { id } = req.params;
-     const { email, ...updatedData } = req.body;
+app.put('/courses/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { email, ...updatedData } = req.body;
 
-     if (!ObjectId.isValid(id)) {
-       return res.status(400).send({ message: 'Invalid course ID' });
-     }
+    if (!ObjectId.isValid(id))
+      return res.status(400).send({ message: 'Invalid course ID' });
 
-     const course = await courseCollection.findOne({ _id: new ObjectId(id) });
-     if (!course) return res.status(404).send({ message: 'Course not found!' });
+    const course = await courseCollection.findOne({ _id: new ObjectId(id) });
+    if (!course) return res.status(404).send({ message: 'Course not found!' });
 
-     if (!email || course.email !== email) {
-       return res
-         .status(403)
-         .send({ message: 'Forbidden: You are not the owner!' });
-     }
+    if (!email || course.email !== email) {
+      return res
+        .status(403)
+        .send({ message: 'Forbidden: You are not the owner!' });
+    }
 
-     const result = await courseCollection.updateOne(
-       { _id: new ObjectId(id) },
-       { $set: updatedData }
-     );
+   
+    const result = await courseCollection.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: updatedData }
+    );
 
-     res.send({ message: 'Course updated successfully!', result });
-   } catch (err) {
-     console.error('Error updating course:', err);
-     res
-       .status(500)
-       .send({ message: 'Internal Server Error', error: err.message });
-   }
- });
+    res.send({ message: 'Course updated successfully!', result });
+  } catch (err) {
+    console.error('Error updating course:', err);
+    res
+      .status(500)
+      .send({ message: 'Internal Server Error', error: err.message });
+  }
+});
 
     app.delete('/courses/:id', async (req, res) => {
       const { id } = req.params;
